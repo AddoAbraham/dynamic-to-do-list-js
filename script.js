@@ -48,3 +48,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+function addTask(taskText, save = true) {
+  const li = document.createElement("li");
+  li.textContent = taskText;
+
+  const removeBtn = document.createElement("button");
+  removeBtn.textContent = "Remove";
+  removeBtn.className = "remove-btn";
+
+  // When Remove button is clicked
+  removeBtn.onclick = () => {
+    li.remove(); // remove from DOM
+    removeFromLocalStorage(taskText); // remove from storage
+  };
+
+  li.appendChild(removeBtn);
+  taskList.appendChild(li);
+
+  // Save to Local Storage if needed
+  if (save) {
+    saveToLocalStorage(taskText);
+  }
+}
+
+function saveToLocalStorage(taskText) {
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks.push(taskText);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function removeFromLocalStorage(taskText) {
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  const updatedTasks = tasks.filter((task) => task !== taskText);
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+}
+
+function loadTasks() {
+  const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  tasks.forEach((taskText) => addTask(taskText, false)); // 'false' means don't save again
+}
